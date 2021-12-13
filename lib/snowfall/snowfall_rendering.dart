@@ -23,11 +23,12 @@ class SnowfallRendering extends StatefulWidget {
   final int startTimeSimulationTicks;
 
   const SnowfallRendering(
-      {
-        required this.builder,
-        required this.onTick,
-        this.startTime = Duration.zero,
-        this.startTimeSimulationTicks = 20, Key? key}) : super(key: key);
+      {required this.builder,
+      required this.onTick,
+      this.startTime = Duration.zero,
+      this.startTimeSimulationTicks = 20,
+      Key? key})
+      : super(key: key);
 
   @override
   _SnowfallRenderingState createState() => _SnowfallRenderingState();
@@ -62,8 +63,8 @@ class _SnowfallRenderingState extends State<SnowfallRendering>
     for (var i in Iterable<int>.generate(widget.startTimeSimulationTicks + 1)) {
       final simulatedTime = Duration(
           milliseconds: (widget.startTime.inMilliseconds *
-              i /
-              widget.startTimeSimulationTicks)
+                  i /
+                  widget.startTimeSimulationTicks)
               .round());
       widget.onTick(simulatedTime);
     }

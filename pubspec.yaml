@@ -1,11 +1,11 @@
 name: snowfall
-description: A beautiful Snowfall effect for your widgets
-version: 0.0.1
+description: A beautiful Snowfall effect for your widgets, simply to implement in your App.
+version: 0.0.2
 homepage: https://github.com/pgiacomo69/snowfall
 # publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 
 environment:
-  sdk: ">=2.15.0 <3.0.0"
+  sdk: ">=2.13.0 <3.0.0"
   flutter: ">=1.17.0"
 
 dependencies:

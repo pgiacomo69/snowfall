@@ -1,11 +1,10 @@
 import 'dart:math' as math;
 
-class Point  {
-
+class Point {
   double x = 0;
   double y = 0;
 
-  Point([this.x=0, this.y=0]);
+  Point([this.x = 0, this.y = 0]);
 
   Point add(Point p) {
     return Point(x + p.x, y + p.y);
@@ -34,7 +33,7 @@ class Point  {
 
   /// find point between points
   Point _interpolate(Point p, double f) {
-    return Point( p.x + (x - p.x) * f, p.y + (y - p.y) * f );
+    return Point(p.x + (x - p.x) * f, p.y + (y - p.y) * f);
   }
 
   double length() {
@@ -68,21 +67,22 @@ class Point  {
   }
 
   static Point pointsInterpolation(Point p1, Point p2, double f) {
-	  return p1._interpolate(p2, f);
+    return p1._interpolate(p2, f);
   }
+
   static Point polar(double l, double r) {
     return Point(l * math.cos(r), l * math.sin(r));
   }
+
   static double distance(Point p1, Point p2) {
     return p1._distance(p2);
   }
 
-  Point operator +(Point p) => Point(x+p.x, y+p.y);
+  Point operator +(Point p) => Point(x + p.x, y + p.y);
 
   @override
   bool operator ==(Object other) => hashCode == other.hashCode;
-  
+
   @override
   int get hashCode => x.hashCode + y.hashCode;
-
 }

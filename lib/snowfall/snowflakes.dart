@@ -9,7 +9,12 @@ class Snowflakes extends StatefulWidget {
   final int numberOfSnowflakes;
   final Color color;
   final int alpha;
-  const Snowflakes({required this.numberOfSnowflakes,required this.color, required this.alpha,Key? key}) : super(key: key);
+  const Snowflakes(
+      {required this.numberOfSnowflakes,
+      required this.color,
+      required this.alpha,
+      Key? key})
+      : super(key: key);
 
   @override
   _SnowflakesState createState() => _SnowflakesState();
@@ -35,7 +40,11 @@ class _SnowflakesState extends State<Snowflakes> {
       onTick: _simulateFlakes,
       builder: (context, time) {
         return CustomPaint(
-          painter: SnowflakesPainter(snowflakes:  flakes,time:  time, color: widget.color,alpha:widget.alpha),
+          painter: SnowflakesPainter(
+              snowflakes: flakes,
+              time: time,
+              color: widget.color,
+              alpha: widget.alpha),
         );
       },
     );

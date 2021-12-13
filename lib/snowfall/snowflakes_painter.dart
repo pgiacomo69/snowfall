@@ -6,7 +6,11 @@ class SnowflakesPainter extends CustomPainter {
   Duration time;
   Color color;
   int alpha;
-  SnowflakesPainter({required this.snowflakes, required this.time, required this.color, required this.alpha});
+  SnowflakesPainter(
+      {required this.snowflakes,
+      required this.time,
+      required this.color,
+      required this.alpha});
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -16,10 +20,9 @@ class SnowflakesPainter extends CustomPainter {
     for (var snowflake in snowflakes) {
       var progress = snowflake.animationProgress!.progress(time);
       final animation = snowflake.tween!.transform(progress);
-      final position =
-          Offset(animation.get(AniProps.X) * size.width, animation.get(AniProps.Y) * size.height);
+      final position = Offset(animation.get(AniProps.X) * size.width,
+          animation.get(AniProps.Y) * size.height);
       canvas.drawPath(snowflake.path!.shift(position), p);
-
     }
   }
 
