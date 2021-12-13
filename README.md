@@ -11,8 +11,7 @@ and the Flutter guide for
 [developing packages and plugins](https://flutter.dev/developing-packages). 
 -->
 
-TODO: Put a short description of the package here that helps potential users
-know whether this package might be useful for them.
+ 
 
 ## Features
 A Flutter package written to add a snowfall effect to your widgets. 
@@ -54,5 +53,5 @@ child: YOURWIDGET
 ## Additional information
 
 This project is based on [Constantin Stan's work](https://medium.com/flutter-community/fluttering-snowflakes-1cf011b0d38d). 
-Here is the [original work](https://github.com/Constans/fluttering-dart)
+Here is the [original project](https://github.com/Constans/fluttering-dart)
 
