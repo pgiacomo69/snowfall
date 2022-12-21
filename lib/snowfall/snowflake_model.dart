@@ -1,38 +1,47 @@
 import 'dart:math' as math;
 
+import 'package:breeze_app/ui/widgets/stateless/snowfall/utils/point.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import 'package:simple_animations/simple_animations.dart';
-import 'package:snowfall/snowfall/utils/point.dart';
 
 enum AniProps { X, Y }
 
 class AnimationProgress {
+  /// Creates an [AnimationProgress].
+  const AnimationProgress({required this.duration, required this.startTime});
+
   final Duration duration;
   final Duration startTime;
-
-  /// Creates an [AnimationProgress].
-  AnimationProgress({required this.duration, required this.startTime});
 
   /// Queries the current progress value based on the specified [startTime] and
   /// [duration] as a value between `0.0` and `1.0`. It will automatically
   /// clamp values this interval to fit in.
-  double progress(Duration time) =>
-      math.max(0.0, math.min((time - startTime).inMilliseconds / duration.inMilliseconds, 1.0));
+  double progress(Duration time) => math.max(0,
+      math.min((time - startTime).inMilliseconds / duration.inMilliseconds, 1));
 }
 
 class SnowflakeModel {
-  static Map<int, Path> cachedFlakes = {};
-
-  Animatable? tween;
-  double size = 0.0;
-  AnimationProgress? animationProgress;
-  math.Random random;
-  Path? _path;
-
-  SnowflakeModel(this.random) {
+  SnowflakeModel(this.random,
+      {required this.minSize,
+      required this.maxSize,
+      required this.applyRandomRotation,
+      this.pathOverrideBuilder})
+      : assert(maxSize >= minSize) {
     restart();
   }
+  static Map<int, Path> cachedFlakes = {};
+
+  final math.Random random;
+  final double minSize;
+  final double maxSize;
+  final Path Function(double size)? pathOverrideBuilder;
+  final bool applyRandomRotation;
+  Animatable? tween;
+  double size = 0;
+  AnimationProgress? animationProgress;
+  Path? _path;
 
   void restart({Duration time = Duration.zero}) {
     _path = null;
@@ -40,8 +49,10 @@ class SnowflakeModel {
     final endPosition = Offset(-0.2 + 1.4 * random.nextDouble(), 1.2);
     final duration = Duration(seconds: 5, milliseconds: random.nextInt(10000));
     tween = MultiTween<AniProps>()
-      ..add(AniProps.X, Tween(begin: startPosition.dx, end: endPosition.dx), duration, Curves.easeInOutSine)
-      ..add(AniProps.Y, Tween(begin: startPosition.dy, end: endPosition.dy), duration, Curves.easeIn);
+      ..add(AniProps.X, Tween(begin: startPosition.dx, end: endPosition.dx),
+          duration, Curves.easeInOutSine)
+      ..add(AniProps.Y, Tween(begin: startPosition.dy, end: endPosition.dy),
+          duration, Curves.easeIn);
 
     /* tween = MultiTrackTween([
       Track("x").add(
@@ -52,7 +63,7 @@ class SnowflakeModel {
           curve: Curves.easeIn),
     ]); */
     animationProgress = AnimationProgress(duration: duration, startTime: time);
-    size = 20 + random.nextDouble() * 100;
+    size = minSize + random.nextDouble() * (maxSize - minSize);
     drawPath();
   }
 
@@ -60,75 +71,74 @@ class SnowflakeModel {
     if (_path != null) {
       return;
     }
+    double sideLength = maxSize - minSize;
+
+    int iterationsTotal = 1;
+    // we calculate the total number of iterations
+    // based on the snowflake's size
+    if (size > 40) {
+      iterationsTotal += size ~/ 25;
+    }
     _path = Path();
-    _path!.lineTo(size, size * 0.71);
-    _path!.cubicTo(size, size * 0.71, size * 0.89, size * 0.66, size * 0.89, size * 0.66);
-    _path!.cubicTo(size * 0.89, size * 0.66, size, size * 0.61, size, size * 0.61);
-    _path!.cubicTo(size, size * 0.6, size * 0.97, size * 0.53, size * 0.95, size * 0.54);
-    _path!.cubicTo(size * 0.95, size * 0.54, size * 0.81, size * 0.61, size * 0.81, size * 0.61);
-    _path!.cubicTo(size * 0.81, size * 0.61, size * 0.59, size / 2, size * 0.59, size / 2);
-    _path!.cubicTo(size * 0.59, size / 2, size * 0.81, size * 0.39, size * 0.81, size * 0.39);
-    _path!.cubicTo(size * 0.81, size * 0.39, size * 0.95, size * 0.46, size * 0.95, size * 0.46);
-    _path!.cubicTo(size * 0.97, size * 0.47, size, size * 0.4, size, size * 0.39);
-    _path!.cubicTo(size, size * 0.39, size * 0.89, size * 0.34, size * 0.89, size * 0.34);
-    _path!.cubicTo(size * 0.89, size * 0.34, size, size * 0.29, size, size * 0.29);
-    _path!.cubicTo(size * 1.02, size * 0.28, size * 0.97, size / 5, size * 0.95, size * 0.22);
-    _path!.cubicTo(size * 0.95, size * 0.22, size * 0.85, size * 0.28, size * 0.85, size * 0.28);
-    _path!.cubicTo(size * 0.85, size * 0.28, size * 0.85, size * 0.18, size * 0.85, size * 0.18);
-    _path!.cubicTo(size * 0.85, size * 0.16, size * 0.76, size * 0.16, size * 0.76, size * 0.18);
-    _path!.cubicTo(size * 0.76, size * 0.18, size * 0.76, size * 0.32, size * 0.76, size * 0.32);
-    _path!.cubicTo(size * 0.76, size * 0.32, size * 0.54, size * 0.43, size * 0.54, size * 0.43);
-    _path!.cubicTo(size * 0.54, size * 0.43, size * 0.54, size / 5, size * 0.54, size / 5);
-    _path!.cubicTo(size * 0.54, size / 5, size * 0.68, size * 0.14, size * 0.68, size * 0.14);
-    _path!.cubicTo(size * 0.7, size * 0.13, size * 0.66, size * 0.06, size * 0.64, size * 0.07);
-    _path!.cubicTo(size * 0.64, size * 0.07, size * 0.54, size * 0.12, size * 0.54, size * 0.12);
-    _path!.cubicTo(size * 0.54, size * 0.12, size * 0.54, size * 0.02, size * 0.54, size * 0.02);
-    _path!.cubicTo(size * 0.54, -0.01, size * 0.46, -0.01, size * 0.46, size * 0.02);
-    _path!.cubicTo(size * 0.46, size * 0.02, size * 0.46, size * 0.12, size * 0.46, size * 0.12);
-    _path!.cubicTo(size * 0.46, size * 0.12, size * 0.36, size * 0.07, size * 0.36, size * 0.07);
-    _path!.cubicTo(size * 0.34, size * 0.06, size * 0.3, size * 0.13, size * 0.32, size * 0.14);
-    _path!.cubicTo(size * 0.32, size * 0.14, size * 0.46, size / 5, size * 0.46, size / 5);
-    _path!.cubicTo(size * 0.46, size / 5, size * 0.46, size * 0.43, size * 0.46, size * 0.43);
-    _path!.cubicTo(size * 0.46, size * 0.43, size * 0.24, size * 0.32, size * 0.24, size * 0.32);
-    _path!.cubicTo(size * 0.24, size * 0.32, size * 0.24, size * 0.18, size * 0.24, size * 0.18);
-    _path!.cubicTo(size * 0.24, size * 0.16, size * 0.15, size * 0.16, size * 0.15, size * 0.18);
-    _path!.cubicTo(size * 0.15, size * 0.18, size * 0.15, size * 0.28, size * 0.15, size * 0.28);
-    _path!.cubicTo(size * 0.15, size * 0.28, size * 0.05, size * 0.22, size * 0.05, size * 0.22);
-    _path!.cubicTo(size * 0.03, size / 5, -0.02, size * 0.28, size * 0.01, size * 0.29);
-    _path!.cubicTo(size * 0.01, size * 0.29, size * 0.11, size * 0.34, size * 0.11, size * 0.34);
-    _path!.cubicTo(size * 0.11, size * 0.34, size * 0.01, size * 0.39, size * 0.01, size * 0.39);
-    _path!.cubicTo(-0.01, size * 0.4, size * 0.03, size * 0.47, size * 0.05, size * 0.46);
-    _path!.cubicTo(size * 0.05, size * 0.46, size * 0.19, size * 0.39, size * 0.19, size * 0.39);
-    _path!.cubicTo(size * 0.19, size * 0.39, size * 0.41, size / 2, size * 0.41, size / 2);
-    _path!.cubicTo(size * 0.41, size / 2, size * 0.19, size * 0.61, size * 0.19, size * 0.61);
-    _path!.cubicTo(size * 0.19, size * 0.61, size * 0.05, size * 0.54, size * 0.05, size * 0.54);
-    _path!.cubicTo(size * 0.03, size * 0.53, -0.01, size * 0.6, size * 0.01, size * 0.61);
-    _path!.cubicTo(size * 0.01, size * 0.61, size * 0.11, size * 0.66, size * 0.11, size * 0.66);
-    _path!.cubicTo(size * 0.11, size * 0.66, size * 0.01, size * 0.71, size * 0.01, size * 0.71);
-    _path!.cubicTo(-0.02, size * 0.72, size * 0.03, size * 0.79, size * 0.05, size * 0.78);
-    _path!.cubicTo(size * 0.05, size * 0.78, size * 0.15, size * 0.72, size * 0.15, size * 0.72);
-    _path!.cubicTo(size * 0.15, size * 0.72, size * 0.15, size * 0.82, size * 0.15, size * 0.82);
-    _path!.cubicTo(size * 0.15, size * 0.84, size * 0.24, size * 0.84, size * 0.24, size * 0.82);
-    _path!.cubicTo(size * 0.24, size * 0.82, size * 0.24, size * 0.68, size * 0.24, size * 0.68);
-    _path!.cubicTo(size * 0.24, size * 0.68, size * 0.46, size * 0.57, size * 0.46, size * 0.57);
-    _path!.cubicTo(size * 0.46, size * 0.57, size * 0.46, size * 0.79, size * 0.46, size * 0.79);
-    _path!.cubicTo(size * 0.46, size * 0.79, size * 0.32, size * 0.86, size * 0.32, size * 0.86);
-    _path!.cubicTo(size * 0.3, size * 0.87, size * 0.34, size * 0.94, size * 0.36, size * 0.93);
-    _path!.cubicTo(size * 0.36, size * 0.93, size * 0.46, size * 0.88, size * 0.46, size * 0.88);
-    _path!.cubicTo(size * 0.46, size * 0.88, size * 0.46, size * 0.98, size * 0.46, size * 0.98);
-    _path!.cubicTo(size * 0.46, size, size * 0.54, size, size * 0.54, size * 0.98);
-    _path!.cubicTo(size * 0.54, size * 0.98, size * 0.54, size * 0.88, size * 0.54, size * 0.88);
-    _path!.cubicTo(size * 0.54, size * 0.88, size * 0.64, size * 0.93, size * 0.64, size * 0.93);
-    _path!.cubicTo(size * 0.66, size * 0.94, size * 0.7, size * 0.87, size * 0.68, size * 0.86);
-    _path!.cubicTo(size * 0.68, size * 0.86, size * 0.54, size * 0.79, size * 0.54, size * 0.79);
-    _path!.cubicTo(size * 0.54, size * 0.79, size * 0.54, size * 0.57, size * 0.54, size * 0.57);
-    _path!.cubicTo(size * 0.54, size * 0.57, size * 0.76, size * 0.68, size * 0.76, size * 0.68);
-    _path!.cubicTo(size * 0.76, size * 0.68, size * 0.76, size * 0.82, size * 0.76, size * 0.82);
-    _path!.cubicTo(size * 0.76, size * 0.84, size * 0.85, size * 0.84, size * 0.85, size * 0.82);
-    _path!.cubicTo(size * 0.85, size * 0.82, size * 0.85, size * 0.72, size * 0.85, size * 0.72);
-    _path!.cubicTo(size * 0.85, size * 0.72, size * 0.95, size * 0.78, size * 0.95, size * 0.78);
-    _path!.cubicTo(size * 0.97, size * 0.79, size * 1.02, size * 0.72, size, size * 0.71);
-    _path!.cubicTo(size, size * 0.71, size, size * 0.71, size, size * 0.71);
+    if (pathOverrideBuilder != null) {
+      _path = pathOverrideBuilder!(size);
+    } else if (cachedFlakes[iterationsTotal] == null) {
+      final double down = (sideLength / 2) * math.tan(math.pi / 6);
+      final double up = (sideLength / 2) * math.tan(math.pi / 3) - down;
+      Point p1 = Point(-sideLength / 2, down);
+      Point p2 = Point(sideLength / 2, down);
+      Point p3 = Point(0, -up);
+      Point p4 = Point(0, 0);
+      Point p5 = Point(0, 0);
+      double rot = random.nextDouble() * 6.28319;
+      List<Point> lines = <Point>[p1, p2, p3];
+      List<Point> tmpLines = <Point>[];
+
+      for (int iterations = 0; iterations < iterationsTotal; iterations++) {
+        sideLength /= 3;
+        for (int loop = 0; loop < lines.length; loop++) {
+          p1 = lines[loop];
+          if (loop == lines.length - 1) {
+            p2 = lines[0];
+          } else {
+            p2 = lines[loop + 1];
+          }
+          rot = math.atan2(p2.y - p1.y, p2.x - p1.x);
+          p3 = p1 + Point.polar(sideLength, rot);
+          rot += math.pi / 3;
+          p4 = p3 + Point.polar(sideLength, rot);
+          rot -= 2 * math.pi / 3;
+          p5 = p4 + Point.polar(sideLength, rot);
+          tmpLines.add(p1);
+          tmpLines.add(p3);
+          tmpLines.add(p4);
+          tmpLines.add(p5);
+        }
+        lines = tmpLines;
+        tmpLines = <Point>[];
+      }
+      lines.add(p2);
+      _path!.moveTo(lines[0].x, lines[0].y);
+      for (int a = 0; a < lines.length; a++) {
+        _path!.lineTo(lines[a].x, lines[a].y);
+      }
+      _path!.lineTo(lines[0].x, lines[0].y);
+      cachedFlakes[iterationsTotal] = _path!;
+    } else {
+      _path = cachedFlakes[iterationsTotal];
+    }
+    // early return when no random z axis rotation needs
+    // to be applied
+    if (!applyRandomRotation) return;
+    final Matrix4 m = Matrix4.identity();
+    // the rotation must be in radians
+    // and to get a random angle we use the 360 equivalent
+    // in radians that is 6.28319
+    m.setRotationZ(random.nextDouble() * 6.28319);
+    final num scaleTo = size / sideLength;
+    m.scale(scaleTo);
+    final List<double> list = m.storage.toList();
+    _path = _path!.transform(Float64List.fromList(list));
   }
 
   Path? get path {
