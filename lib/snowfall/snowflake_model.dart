@@ -60,6 +60,7 @@ class SnowflakeModel {
     if (_path != null) {
       return;
     }
+    _path = Path();
     _path.lineTo(size, size * 0.71);
     _path.cubicTo(size, size * 0.71, size * 0.89, size * 0.66, size * 0.89, size * 0.66);
     _path.cubicTo(size * 0.89, size * 0.66, size, size * 0.61, size, size * 0.61);
