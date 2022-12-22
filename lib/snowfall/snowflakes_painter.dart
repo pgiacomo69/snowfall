@@ -1,5 +1,5 @@
-import 'package:breeze_app/ui/widgets/stateless/snowfall/snowflake_model.dart';
 import 'package:flutter/material.dart';
+import 'package:snowfall/snowfall/snowflake_model.dart';
 
 class SnowflakesPainter extends CustomPainter {
   const SnowflakesPainter(

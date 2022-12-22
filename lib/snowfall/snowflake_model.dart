@@ -1,10 +1,10 @@
 import 'dart:math' as math;
 
-import 'package:breeze_app/ui/widgets/stateless/snowfall/utils/point.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import 'package:simple_animations/simple_animations.dart';
+import 'package:snowfall/snowfall/utils/point.dart';
 
 enum AniProps { X, Y }
 

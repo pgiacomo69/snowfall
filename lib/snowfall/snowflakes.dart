@@ -1,9 +1,9 @@
 import 'dart:math';
 
-import 'package:breeze_app/ui/widgets/stateless/snowfall/snowfall_rendering.dart';
-import 'package:breeze_app/ui/widgets/stateless/snowfall/snowflake_model.dart';
-import 'package:breeze_app/ui/widgets/stateless/snowfall/snowflakes_painter.dart';
 import 'package:flutter/material.dart';
+import 'package:snowfall/snowfall/snowflakes_painter.dart';
+import 'package:snowfall/snowfall/snowflake_model.dart';
+import 'package:snowfall/snowfall/snowfall_rendering.dart';
 
 class Snowflakes extends StatefulWidget {
   const Snowflakes(

@@ -1,5 +1,5 @@
-import 'package:breeze_app/ui/widgets/stateless/snowfall/snowflakes.dart';
 import 'package:flutter/material.dart';
+import 'package:snowfall/snowfall/snowflakes.dart';
 
 class SnowfallWidget extends StatelessWidget {
   const SnowfallWidget(
