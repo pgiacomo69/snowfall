@@ -18,16 +18,13 @@ class AnimationProgress {
   /// Queries the current progress value based on the specified [startTime] and
   /// [duration] as a value between `0.0` and `1.0`. It will automatically
   /// clamp values this interval to fit in.
-  double progress(Duration time) => math.max(0,
-      math.min((time - startTime).inMilliseconds / duration.inMilliseconds, 1));
+  double progress(Duration time) =>
+      math.max(0, math.min((time - startTime).inMilliseconds / duration.inMilliseconds, 1));
 }
 
 class SnowflakeModel {
   SnowflakeModel(this.random,
-      {required this.minSize,
-      required this.maxSize,
-      required this.applyRandomRotation,
-      this.pathOverrideBuilder})
+      {required this.minSize, required this.maxSize, required this.applyRandomRotation, this.pathOverrideBuilder})
       : assert(maxSize >= minSize) {
     restart();
   }
@@ -48,11 +45,11 @@ class SnowflakeModel {
     final startPosition = Offset(-0.2 + 1.4 * random.nextDouble(), -0.2);
     final endPosition = Offset(-0.2 + 1.4 * random.nextDouble(), 1.2);
     final duration = Duration(seconds: 5, milliseconds: random.nextInt(10000));
-    tween = MultiTween<AniProps>()
-      ..add(AniProps.X, Tween(begin: startPosition.dx, end: endPosition.dx),
-          duration, Curves.easeInOutSine)
-      ..add(AniProps.Y, Tween(begin: startPosition.dy, end: endPosition.dy),
-          duration, Curves.easeIn);
+    tween = MovieTween()
+      ..tween(AniProps.X, Tween(begin: startPosition.dx, end: endPosition.dx),
+          duration: duration, curve: Curves.easeInOutSine)
+      ..tween(AniProps.Y, Tween(begin: startPosition.dy, end: endPosition.dy),
+          duration: duration, curve: Curves.easeIn);
 
     /* tween = MultiTrackTween([
       Track("x").add(
