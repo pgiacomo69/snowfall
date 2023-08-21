@@ -17,11 +17,6 @@ import 'package:flutter/widgets.dart';
 /// multiple times. (Default value is `20`. You can tune it by setting the
 /// [startTimeSimulationTicks] property.)
 class SnowfallRendering extends StatefulWidget {
-  final Widget Function(BuildContext context, Duration timeElapsed) builder;
-  final Function(Duration timeElapsed) onTick;
-  final Duration startTime;
-  final int startTimeSimulationTicks;
-
   const SnowfallRendering(
       {required this.builder,
       required this.onTick,
@@ -30,6 +25,11 @@ class SnowfallRendering extends StatefulWidget {
       Key? key})
       : super(key: key);
 
+  final Widget Function(BuildContext context, Duration timeElapsed) builder;
+  final Function(Duration timeElapsed) onTick;
+  final Duration startTime;
+  final int startTimeSimulationTicks;
+
   @override
   _SnowfallRenderingState createState() => _SnowfallRenderingState();
 }
@@ -37,7 +37,7 @@ class SnowfallRendering extends StatefulWidget {
 class _SnowfallRenderingState extends State<SnowfallRendering>
     with SingleTickerProviderStateMixin {
   late Ticker _ticker;
-  Duration _timeElapsed = const Duration(milliseconds: 0);
+  Duration _timeElapsed = Duration.zero;
 
   @override
   void initState() {
@@ -60,7 +60,8 @@ class _SnowfallRenderingState extends State<SnowfallRendering>
   }
 
   void _simulateStartTimeTicks() {
-    for (var i in Iterable<int>.generate(widget.startTimeSimulationTicks + 1)) {
+    for (final i
+        in Iterable<int>.generate(widget.startTimeSimulationTicks + 1)) {
       final simulatedTime = Duration(
           milliseconds: (widget.startTime.inMilliseconds *
                   i /

@@ -6,15 +6,24 @@ import 'package:snowfall/snowfall/snowflake_model.dart';
 import 'package:snowfall/snowfall/snowfall_rendering.dart';
 
 class Snowflakes extends StatefulWidget {
-  final int numberOfSnowflakes;
-  final Color color;
-  final int alpha;
   const Snowflakes(
       {required this.numberOfSnowflakes,
+      required this.pathBuilder,
+      required this.minSize,
+      required this.maxSize,
+      required this.applyRandomRotation,
       required this.color,
       required this.alpha,
       Key? key})
       : super(key: key);
+
+  final int numberOfSnowflakes;
+  final Path Function(double size)? pathBuilder;
+  final double minSize;
+  final double maxSize;
+  final bool applyRandomRotation;
+  final Color color;
+  final int alpha;
 
   @override
   _SnowflakesState createState() => _SnowflakesState();
@@ -28,7 +37,11 @@ class _SnowflakesState extends State<Snowflakes> {
   @override
   void initState() {
     List.generate(widget.numberOfSnowflakes, (index) {
-      flakes.add(SnowflakeModel(random));
+      flakes.add(SnowflakeModel(random,
+          minSize: widget.minSize,
+          maxSize: widget.maxSize,
+          applyRandomRotation: widget.applyRandomRotation,
+          pathOverrideBuilder: widget.pathBuilder));
     });
     super.initState();
   }
@@ -50,8 +63,8 @@ class _SnowflakesState extends State<Snowflakes> {
     );
   }
 
-  _simulateFlakes(Duration time) {
-    for (var flake in flakes) {
+  void _simulateFlakes(Duration time) {
+    for (final flake in flakes) {
       flake.maintainRestart(time);
     }
   }

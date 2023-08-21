@@ -2,23 +2,24 @@ import 'package:flutter/material.dart';
 import 'package:snowfall/snowfall/snowflake_model.dart';
 
 class SnowflakesPainter extends CustomPainter {
-  List<SnowflakeModel> snowflakes;
-  Duration time;
-  Color color;
-  int alpha;
-  SnowflakesPainter(
+  const SnowflakesPainter(
       {required this.snowflakes,
       required this.time,
       required this.color,
       required this.alpha});
+
+  final List<SnowflakeModel> snowflakes;
+  final Duration time;
+  final Color color;
+  final int alpha;
 
   @override
   void paint(Canvas canvas, Size size) {
     final Paint p = Paint()
       ..color = color.withAlpha(alpha)
       ..style = PaintingStyle.fill;
-    for (var snowflake in snowflakes) {
-      var progress = snowflake.animationProgress!.progress(time);
+    for (final snowflake in snowflakes) {
+      final progress = snowflake.animationProgress!.progress(time);
       final animation = snowflake.tween!.transform(progress);
       final position = Offset(animation.get(AniProps.X) * size.width,
           animation.get(AniProps.Y) * size.height);

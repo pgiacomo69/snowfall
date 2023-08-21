@@ -1,10 +1,10 @@
 import 'dart:math' as math;
 
 class Point {
+  Point([this.x = 0, this.y = 0]);
+
   double x = 0;
   double y = 0;
-
-  Point([this.x = 0, this.y = 0]);
 
   Point add(Point p) {
     return Point(x + p.x, y + p.y);
@@ -15,15 +15,15 @@ class Point {
   }
 
   double degreesTo(Point p) {
-    double dx = x = p.x;
-    double dy = y = p.y;
-    double angle = math.atan2(dy, dx); // radians
+    final double dx = x = p.x;
+    final double dy = y = p.y;
+    final double angle = math.atan2(dy, dx); // radians
     return angle * (180 / math.pi); // degrees
   }
 
   double _distance(Point p) {
-    double x = this.x - p.x;
-    double y = this.y - p.y;
+    final double x = this.x - p.x;
+    final double y = this.y - p.y;
     return math.sqrt(x * x + y * y);
   }
 
@@ -41,13 +41,13 @@ class Point {
   }
 
   void normalize(double thickness) {
-    double l = length();
+    final double l = length();
     x = x / l * thickness;
     y = y / l * thickness;
   }
 
   void orbit(Point origin, double arcWidth, double arcHeight, double degrees) {
-    double radians = degrees * (math.pi / 180);
+    final double radians = degrees * (math.pi / 180);
     x = origin.x + arcWidth * math.cos(radians);
     y = origin.y + arcHeight * math.sin(radians);
   }
